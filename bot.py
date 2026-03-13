@@ -3,7 +3,9 @@ import time
 import asyncio
 from datetime import datetime
 from telegram import Bot
-from config import TOKEN, CHAT_ID
+import os
+TOKEN   = os.environ.get("TOKEN")
+CHAT_ID = int(os.environ.get("CHAT_ID"))
 
 bot = Bot(token=TOKEN)
 
