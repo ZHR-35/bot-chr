@@ -1,2 +1,2 @@
 python-telegram-bot==22.6
-schedule==1.2.2git init
+schedule==1.2.2
