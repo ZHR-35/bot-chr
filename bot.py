@@ -57,7 +57,7 @@ def construir_mensaje_hoy():
     for tema, descripcion, tiempo in horario[dia]:
         completado = "✅" if tema in temas_completados else "⬜"
         mensaje += f"{completado} {tema}: {descripcion} — _{tiempo}_\n"
-    mensaje += "\n💪 ¡Tú puedes! Un día a la vez."
+    mensaje += "\n— CHR, esto no es opcional.\n  Cada día que sigues el plan, te acercas más a quien serás. 🎓"
     return mensaje
 
 # ── Comandos ──
@@ -69,6 +69,12 @@ async def comando_listo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
         await update.message.reply_text("Uso: /listo nombre del tema\nEjemplo: /listo Matemáticas")
         return
+    
+async def comando_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "CHR.\n\nSoy tu yo del futuro.\n\nYa sé lo que se siente querer rendirse — pero también sé lo que se siente llegar.\n\nEscribe /hoy y empieza. No mañana. Ahora.",
+        parse_mode="Markdown"
+    )
 
     tema_input = " ".join(context.args).lower()
     encontrado = None
@@ -83,9 +89,9 @@ async def comando_listo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if encontrado:
         if encontrado not in temas_completados:
             temas_completados.append(encontrado)
-            await update.message.reply_text(f"✅ *{encontrado}* marcado como completado. ¡Excelente!", parse_mode="Markdown")
+            await update.message.reply_text(f"✅ *{encontrado}* completado.\nBien hecho, CHR. Así se construye un ingeniero.", parse_mode="Markdown")
         else:
-            await update.message.reply_text(f"Ya habías completado *{encontrado}* hoy. 💪", parse_mode="Markdown")
+            await update.message.reply_text(f"Ya completaste *{encontrado}* hoy, CHR.\nNo busques atajos — sigue con el siguiente.", parse_mode="Markdown")
     else:
         await update.message.reply_text("No encontré ese tema. Escribe /hoy para ver los temas de hoy.")
 
@@ -120,4 +126,5 @@ if __name__ == "__main__":
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("hoy", comando_hoy))
     app.add_handler(CommandHandler("listo", comando_listo))
+    app.add_handler(CommandHandler("start", comando_start))
     app.run_polling()
