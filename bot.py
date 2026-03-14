@@ -47,7 +47,6 @@ dias_es = {
 }
 
 temas_completados = []
-app = None
 
 def construir_mensaje_hoy():
     dia = datetime.now().strftime("%A")
@@ -61,6 +60,12 @@ def construir_mensaje_hoy():
     return mensaje
 
 # ── Comandos ──
+async def comando_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "CHR.\n\nSoy tu yo del futuro.\n\nYa sé lo que se siente querer rendirse — pero también sé lo que se siente llegar.\n\nEscribe /hoy y empieza. No mañana. Ahora.",
+        parse_mode="Markdown"
+    )
+
 async def comando_hoy(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mensaje = construir_mensaje_hoy()
     await update.message.reply_text(mensaje, parse_mode="Markdown")
@@ -69,12 +74,6 @@ async def comando_listo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
         await update.message.reply_text("Uso: /listo nombre del tema\nEjemplo: /listo Matemáticas")
         return
-    
-async def comando_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "CHR.\n\nSoy tu yo del futuro.\n\nYa sé lo que se siente querer rendirse — pero también sé lo que se siente llegar.\n\nEscribe /hoy y empieza. No mañana. Ahora.",
-        parse_mode="Markdown"
-    )
 
     tema_input = " ".join(context.args).lower()
     encontrado = None
@@ -89,13 +88,19 @@ async def comando_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if encontrado:
         if encontrado not in temas_completados:
             temas_completados.append(encontrado)
-            await update.message.reply_text(f"✅ *{encontrado}* completado.\nBien hecho, CHR. Así se construye un ingeniero.", parse_mode="Markdown")
+            await update.message.reply_text(
+                f"✅ *{encontrado}* completado.\nBien hecho, CHR. Así se construye un ingeniero.",
+                parse_mode="Markdown"
+            )
         else:
-            await update.message.reply_text(f"Ya completaste *{encontrado}* hoy, CHR.\nNo busques atajos — sigue con el siguiente.", parse_mode="Markdown")
+            await update.message.reply_text(
+                f"Ya completaste *{encontrado}* hoy, CHR.\nNo busques atajos — sigue con el siguiente.",
+                parse_mode="Markdown"
+            )
     else:
         await update.message.reply_text("No encontré ese tema. Escribe /hoy para ver los temas de hoy.")
 
-# ── Recordatorio automático (corre en hilo separado) ──
+# ── Recordatorio automático ──
 def enviar_recordatorio_sync():
     async def _enviar():
         temas_completados.clear()
@@ -118,13 +123,13 @@ def hilo_schedule():
 
 # ── Inicio ──
 if __name__ == "__main__":
-    print("🤖 Bot iniciado con comandos /hoy y /listo")
+    print("🤖 Bot iniciado con comandos /start /hoy y /listo")
 
     t = threading.Thread(target=hilo_schedule, daemon=True)
     t.start()
 
     app = Application.builder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", comando_start))
     app.add_handler(CommandHandler("hoy", comando_hoy))
     app.add_handler(CommandHandler("listo", comando_listo))
-    app.add_handler(CommandHandler("start", comando_start))
     app.run_polling()
