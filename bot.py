@@ -1,11 +1,12 @@
-import os
 import schedule
 import time
 import asyncio
 from datetime import datetime
 from telegram import Update, Bot
 from telegram.ext import Application, CommandHandler, ContextTypes
-from config import TOKEN, CHAT_ID
+import os
+TOKEN   = os.environ.get("TOKEN")
+CHAT_ID = int(os.environ.get("CHAT_ID"))
 
 # ── Horario semanal ──
 horario = {
